@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup -c && node index.js",
-    "eslint": "eslint main.ts utils/*.ts"
+    "eslint": "eslint main.ts utils/*.ts",
+    "lint": "lint-staged"
   },
   "files": [],
   "repository": {
@@ -28,7 +29,11 @@
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "husky": "^8.0.1",
+    "lint-staged": "^13.0.0",
     "rollup": "^2.75.5",
     "typescript": "^4.7.3"
+  },
+  "lint-staged": {
+    "*.ts": "eslint"
   }
 }
