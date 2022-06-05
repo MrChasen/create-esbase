@@ -2,7 +2,9 @@
   "name": "create-esbase",
   "version": "1.0.0",
   "description": "Use to create a React project",
-  "main": "index.js",
+  "bin": {
+    "create-esbase": "index.js"
+  },
   "scripts": {
     "build": "rollup -c && node index.js",
     "eslint": "eslint main.ts utils/*.ts",
