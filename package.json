@@ -37,5 +37,12 @@
   },
   "lint-staged": {
     "*.ts": "eslint"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2",
+    "chalk": "^4.1.2",
+    "commander": "^9.2.0",
+    "log-symbols": "^5.1.0",
+    "minimist": "^1.2.6"
   }
 }
