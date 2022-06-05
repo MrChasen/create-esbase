@@ -6,11 +6,14 @@
     "create-esbase": "index.js"
   },
   "scripts": {
-    "build": "rollup -c && node index.js",
+    "build": "rollup -c && npm run compress",
     "eslint": "eslint main.ts utils/*.ts",
-    "lint": "lint-staged"
+    "lint": "lint-staged",
+    "compress": "terser index.js -o index.js"
   },
-  "files": [],
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MrChasen/create-esbase.git"
@@ -35,16 +38,17 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.0",
     "rollup": "^2.75.5",
+    "terser": "^5.14.0",
     "typescript": "^4.7.3"
   },
   "lint-staged": {
     "*.ts": "eslint"
   },
   "dependencies": {
-    "prompts": "^2.4.2",
     "chalk": "^4.1.2",
     "commander": "^9.2.0",
     "log-symbols": "^5.1.0",
-    "minimist": "^1.2.6"
+    "minimist": "^1.2.6",
+    "prompts": "^2.4.2"
   }
 }
