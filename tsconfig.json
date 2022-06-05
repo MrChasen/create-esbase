@@ -18,7 +18,7 @@
     "node_modules"
   ],
   "include": [
-    "index.ts",
+    "main.ts",
     "utils/**/*.ts"
   ]
 }
