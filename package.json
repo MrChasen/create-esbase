@@ -1,6 +1,6 @@
 {
   "name": "create-esbase",
-  "version": "1.0.0",
+  "version": "1.0.1-beta.01",
   "description": "Use to create a React project",
   "bin": {
     "create-esbase": "index.js"
@@ -9,10 +9,12 @@
     "build": "rollup -c && npm run compress",
     "eslint": "eslint main.ts utils/*.ts",
     "lint": "lint-staged",
-    "compress": "terser index.js -o index.js"
+    "compress": "terser index.js -o index.js",
+    "test": "node index.js"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "package"
   ],
   "repository": {
     "type": "git",
@@ -47,6 +49,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^9.2.0",
+    "cross-spawn": "^7.0.3",
     "log-symbols": "^5.1.0",
     "minimist": "^1.2.6",
     "prompts": "^2.4.2"

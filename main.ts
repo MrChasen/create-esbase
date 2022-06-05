@@ -5,15 +5,46 @@ import minimist from 'minimist'
 import prompts from 'prompts';
 import chalk from "chalk";
 import logSymbols from "log-symbols";
+// import spawn from "cross-spawn";
 import { isEmpty, emptyDir } from './utils/empty'
 import renderTemplate from './utils/render-template';
 
+// function executeNodeScript(cmd, data: string[]) {
+//     return new Promise((resolve,reject) => {
+//         const child = spawn(cmd, data, { stdio: 'inherit' });
+//         child.on('close', code => {
+//             if (code !== 0) {
+//                 reject({
+//                     command: `${cmd} ${data.join(' ')}`,
+//                 });
+//                 return;
+//             }
+//             resolve(111);
+//         });
+//     })
+//
+// }
 
 async function init() {
     const currPath = process.cwd();
     const argv = minimist(process.argv.slice(2));
     let targetDir = argv._[0];
     const defaultProjectName = !targetDir ? 'React-Project' : targetDir
+
+    // console.log(process.execPath,'<___666666')
+    // const bool = await executeNodeScript('npm',[
+    //     'install',
+    //     '--no-audit',
+    //     '--save',
+    //     '--save-exact',
+    //     '--loglevel',
+    //     'error',
+    // ].concat('esbase-template'))
+    // console.log(bool,'<___bool')
+    // if(bool)
+    // {
+    //     process.exit(0)
+    // }
 
     let result :{
         overwrite?: boolean;
@@ -69,7 +100,6 @@ async function init() {
         process.exit(1);
     }
     const { overwrite, template } = result;
-    console.log(template)
     const root = path.join(currPath, targetDir.toLowerCase());
     if(overwrite) {
         emptyDir(root)
