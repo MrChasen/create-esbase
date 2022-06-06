@@ -5,39 +5,20 @@ import minimist from 'minimist'
 import prompts from 'prompts';
 import chalk from "chalk";
 import logSymbols from "log-symbols";
-import spawn from "cross-spawn";
 import { isEmpty, emptyDir } from './utils/empty'
-import renderTemplate from './utils/render-template';
-
-function executeNodeScript(cmd, data: string[]) {
-    return new Promise((resolve,reject) => {
-        const child = spawn(cmd, data, { stdio: 'inherit' });
-        child.on('close', code => {
-            if (code !== 0) {
-                reject({
-                    command: `${cmd} ${data.join(' ')}`,
-                });
-                return;
-            }
-            resolve(111);
-        });
-    })
-
-}
+import { packageManager, executeNodeScript } from './utils/utils';
+import { create } from './utils/demo'
+// import { toValidPackageName, isValidPackageName } from './utils/validate'
 
 async function init() {
-    const currPath = process.cwd();
     const argv = minimist(process.argv.slice(2));
     let targetDir = argv._[0];
     const defaultProjectName = !targetDir ? 'React-Project' : targetDir
-
-    console.log(process.execPath,'<___666666')
-
     let result :{
         overwrite?: boolean;
         template?: string
     } = {};
-
+    console.log();
     try {
         result = await prompts(
             [
@@ -48,6 +29,13 @@ async function init() {
                     initial: defaultProjectName,
                     onState: (state) => (targetDir = String(state.value).trim() || defaultProjectName)
                 },
+                // {
+                //     name: 'packageName',
+                //     type: () => (isValidPackageName(targetDir) ? null : 'text'),
+                //     message: 'Package name:',
+                //     initial: () => toValidPackageName(targetDir),
+                //     validate: (dir) => isValidPackageName(dir) || 'Invalid package.json name'
+                // },
                 {
                     type: () => {
                         return !fs.existsSync(targetDir) || isEmpty(targetDir) ? null :'confirm'
@@ -71,12 +59,12 @@ async function init() {
                     message: 'Select Typescript or Javascript for your React Project',
                     choices: [
                         {
-                            value: 'js',
-                            name: 'js'
+                            value: 'javascript',
+                            title: 'javascript'
                         },
                         {
-                            value: 'ts',
-                            name: 'ts'
+                            value: 'typescript',
+                            title: 'typescript'
                         }
                     ]
                 },
@@ -87,14 +75,28 @@ async function init() {
         process.exit(1);
     }
     const { overwrite, template } = result;
+    const currPath = process.cwd()
     const root = path.join(currPath, targetDir.toLowerCase());
+    const appName = path.basename(root);
     if(overwrite) {
         emptyDir(root)
     } else if(!fs.existsSync(root)) {
         fs.mkdirSync(root, { recursive: true })
     }
-
+    console.log();
+    console.log(`Creating a new React app in ${chalk.green(root)}.`);
+    console.log();
     process.chdir(root);
+    const packageJson = {
+        name: appName,
+        version: '0.1.0',
+    };
+    fs.writeFileSync(
+        path.join(root, 'package.json'),
+        JSON.stringify(packageJson, null, 2)
+    );
+    console.log('Installing packages. This might take a couple of minutes.');
+    console.log()
     const bool = await executeNodeScript('npm',[
         'install',
         '--no-audit',
@@ -102,20 +104,13 @@ async function init() {
         '--save-exact',
         '--loglevel',
         'error',
-    ].concat('esbase-template'))
-    console.log(bool,'<___bool')
+    ].concat(`esbase-template-${template}`))
     if(bool)
     {
+        create(root,`esbase-template-${template}`)
         process.exit(0)
     }
-
-    const templateDir = path.resolve(__dirname, './package', `esbase-template-${template}`)
-
-    renderTemplate(templateDir, root);
-
-    const userAgent = process.env.npm_config_user_agent || ''
-    const packageManager = /yarn/.test(userAgent) ? 'yarn' : 'npm'
-
+    // // renderTemplate(templateDir, root);
     console.log(`\nDone. Now run:\n`)
     if (root !== currPath) {
         console.log(`  cd ${path.relative(currPath, root)}`)
