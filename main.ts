@@ -5,25 +5,25 @@ import minimist from 'minimist'
 import prompts from 'prompts';
 import chalk from "chalk";
 import logSymbols from "log-symbols";
-// import spawn from "cross-spawn";
+import spawn from "cross-spawn";
 import { isEmpty, emptyDir } from './utils/empty'
 import renderTemplate from './utils/render-template';
 
-// function executeNodeScript(cmd, data: string[]) {
-//     return new Promise((resolve,reject) => {
-//         const child = spawn(cmd, data, { stdio: 'inherit' });
-//         child.on('close', code => {
-//             if (code !== 0) {
-//                 reject({
-//                     command: `${cmd} ${data.join(' ')}`,
-//                 });
-//                 return;
-//             }
-//             resolve(111);
-//         });
-//     })
-//
-// }
+function executeNodeScript(cmd, data: string[]) {
+    return new Promise((resolve,reject) => {
+        const child = spawn(cmd, data, { stdio: 'inherit' });
+        child.on('close', code => {
+            if (code !== 0) {
+                reject({
+                    command: `${cmd} ${data.join(' ')}`,
+                });
+                return;
+            }
+            resolve(111);
+        });
+    })
+
+}
 
 async function init() {
     const currPath = process.cwd();
@@ -31,20 +31,7 @@ async function init() {
     let targetDir = argv._[0];
     const defaultProjectName = !targetDir ? 'React-Project' : targetDir
 
-    // console.log(process.execPath,'<___666666')
-    // const bool = await executeNodeScript('npm',[
-    //     'install',
-    //     '--no-audit',
-    //     '--save',
-    //     '--save-exact',
-    //     '--loglevel',
-    //     'error',
-    // ].concat('esbase-template'))
-    // console.log(bool,'<___bool')
-    // if(bool)
-    // {
-    //     process.exit(0)
-    // }
+    console.log(process.execPath,'<___666666')
 
     let result :{
         overwrite?: boolean;
@@ -105,6 +92,21 @@ async function init() {
         emptyDir(root)
     } else if(!fs.existsSync(root)) {
         fs.mkdirSync(root, { recursive: true })
+    }
+
+    process.chdir(root);
+    const bool = await executeNodeScript('npm',[
+        'install',
+        '--no-audit',
+        '--save',
+        '--save-exact',
+        '--loglevel',
+        'error',
+    ].concat('esbase-template'))
+    console.log(bool,'<___bool')
+    if(bool)
+    {
+        process.exit(0)
     }
 
     const templateDir = path.resolve(__dirname, './package', `esbase-template-${template}`)
