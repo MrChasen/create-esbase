@@ -37,6 +37,7 @@
     "@rollup/plugin-typescript": "^8.3.2",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^8.17.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.0",
     "rollup": "^2.75.5",
@@ -50,6 +51,7 @@
     "chalk": "^4.1.2",
     "commander": "^9.2.0",
     "cross-spawn": "^7.0.3",
+    "fs-extra": "^10.1.0",
     "log-symbols": "^5.1.0",
     "minimist": "^1.2.6",
     "prompts": "^2.4.2"

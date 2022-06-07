@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export default function renderTemplate(templateDir, root) {
+export default async function renderTemplate(templateDir, root) {
     function copy(src, dest) {
         const stat = fs.statSync(src)
         if (stat.isDirectory()) {
