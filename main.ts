@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs-extra'
 import * as path from 'path';
 
 import minimist from 'minimist'
@@ -7,7 +7,7 @@ import chalk from "chalk";
 import logSymbols from "log-symbols";
 import { isEmpty, emptyDir } from './utils/empty'
 import { packageManager, executeNodeScript } from './utils/utils';
-import { create } from './utils/demo'
+import { createApp } from './utils/create-app'
 
 async function init() {
     const argv = minimist(process.argv.slice(2),{
@@ -20,25 +20,25 @@ async function init() {
     });
     const template = argv['template']
     const targetDir = argv._[0];
-    console.log(template, targetDir, '<---template, targetDir')
+    console.log();
     let result :{
         overwrite?: boolean;
+        isCurrentDir?: boolean;
     } = {};
-    return
     try {
         result = await prompts(
             [
                 {
-                    name: 'projectName',
+                    name: 'isCurrentDir',
                     type: targetDir ? null : 'confirm',
                     message: 'Create project under current directory?',
                 },
                 {
-                    type: () => {
-                        return !fs.existsSync(targetDir) || isEmpty(targetDir) ? null :'confirm'
-                    },
+                    type: (isCurrentDir)=> isCurrentDir ? null: (!fs.existsSync(targetDir) || isEmpty(targetDir)) ? null :'confirm',
                     name:'overwrite',
-                    message: () => !fs.existsSync(targetDir) || isEmpty(targetDir) ? 'Current directory' : `Target directory ${targetDir.toLowerCase()} is not empty. Remove existing files and continue?`
+                    message: () => {
+                      return targetDir && !fs.existsSync(targetDir) || isEmpty(targetDir) ? 'Current directory' : `Target directory ${targetDir.toLowerCase()} is not empty. Remove existing files and continue?`
+                    }
                 },
                 {
                     name: 'overwriteChecker',
@@ -52,14 +52,13 @@ async function init() {
                 },
             ]
         )
-    } catch (e :any) {
+    } catch (e) {
         console.log(e)
         process.exit(1);
     }
-    const { overwrite } = result;
-    return
+    const { overwrite, isCurrentDir } = result;
     const currPath = process.cwd()
-    const root = path.join(currPath, targetDir.toLowerCase());
+    const root = isCurrentDir ? currPath : path.join(currPath, targetDir.toLowerCase());
     const appName = path.basename(root);
     if(overwrite) {
         emptyDir(root)
@@ -72,7 +71,7 @@ async function init() {
     process.chdir(root);
     const packageJson = {
         name: appName,
-        version: '0.1.0',
+        version: '0.0.1',
     };
     fs.writeFileSync(
         path.join(root, 'package.json'),
@@ -90,7 +89,7 @@ async function init() {
     ].concat(`esbase-template-${template}`))
     if(bool)
     {
-        await create(process.cwd(),`esbase-template-javascript`)
+        await createApp(process.cwd(),`esbase-template-javascript`)
     }
     console.log(`\nDone. Now run:\n`)
     if (root !== currPath) {
