@@ -8,34 +8,31 @@ import logSymbols from "log-symbols";
 import { isEmpty, emptyDir } from './utils/empty'
 import { packageManager, executeNodeScript } from './utils/utils';
 import { create } from './utils/demo'
-// import { toValidPackageName, isValidPackageName } from './utils/validate'
 
 async function init() {
-    const argv = minimist(process.argv.slice(2));
-    let targetDir = argv._[0];
-    const defaultProjectName = !targetDir ? 'React-Project' : targetDir
+    const argv = minimist(process.argv.slice(2),{
+        alias: {
+            template: ['tmp']
+        },
+        default: {
+            template: 'js'
+        }
+    });
+    const template = argv['template']
+    const targetDir = argv._[0];
+    console.log(template, targetDir, '<---template, targetDir')
     let result :{
         overwrite?: boolean;
-        template?: string
     } = {};
-    console.log();
+    return
     try {
         result = await prompts(
             [
                 {
                     name: 'projectName',
-                    type: targetDir ? null : 'text',
-                    message: 'Project name:',
-                    initial: defaultProjectName,
-                    onState: (state) => (targetDir = String(state.value).trim() || defaultProjectName)
+                    type: targetDir ? null : 'confirm',
+                    message: 'Create project under current directory?',
                 },
-                // {
-                //     name: 'packageName',
-                //     type: () => (isValidPackageName(targetDir) ? null : 'text'),
-                //     message: 'Package name:',
-                //     initial: () => toValidPackageName(targetDir),
-                //     validate: (dir) => isValidPackageName(dir) || 'Invalid package.json name'
-                // },
                 {
                     type: () => {
                         return !fs.existsSync(targetDir) || isEmpty(targetDir) ? null :'confirm'
@@ -44,6 +41,7 @@ async function init() {
                     message: () => !fs.existsSync(targetDir) || isEmpty(targetDir) ? 'Current directory' : `Target directory ${targetDir.toLowerCase()} is not empty. Remove existing files and continue?`
                 },
                 {
+                    name: 'overwriteChecker',
                     type: (overwrite) => {
                         if (overwrite === false) {
                             console.log(logSymbols.error,chalk.bold.red('Operation cancelled'))
@@ -51,22 +49,6 @@ async function init() {
                         }
                         return null
                     },
-                    name: 'overwriteChecker'
-                },
-                {
-                    type: 'select',
-                    name: 'template',
-                    message: 'Select Typescript or Javascript for your React Project',
-                    choices: [
-                        {
-                            value: 'javascript',
-                            title: 'javascript'
-                        },
-                        {
-                            value: 'typescript',
-                            title: 'typescript'
-                        }
-                    ]
                 },
             ]
         )
@@ -74,7 +56,8 @@ async function init() {
         console.log(e)
         process.exit(1);
     }
-    const { overwrite, template } = result;
+    const { overwrite } = result;
+    return
     const currPath = process.cwd()
     const root = path.join(currPath, targetDir.toLowerCase());
     const appName = path.basename(root);
