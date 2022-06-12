@@ -13,8 +13,7 @@
     "test": "node index.js"
   },
   "files": [
-    "index.js",
-    "package"
+    "index.js"
   ],
   "repository": {
     "type": "git",
@@ -24,7 +23,10 @@
     "react",
     "create-esbase"
   ],
-  "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/MrChasen/create-esbase/issues"
   },
@@ -44,9 +46,6 @@
     "terser": "^5.14.0",
     "typescript": "^4.7.3"
   },
-  "lint-staged": {
-    "*.ts": "eslint"
-  },
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^9.2.0",
@@ -55,5 +54,8 @@
     "log-symbols": "^5.1.0",
     "minimist": "^1.2.6",
     "prompts": "^2.4.2"
+  },
+  "lint-staged": {
+    "*.ts": "eslint"
   }
 }
